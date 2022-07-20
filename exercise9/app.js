@@ -6,9 +6,9 @@ function createApp() {
 
     response.setHeader("Content-Type", "text/html");
 
-    // const jsonResponseBody = "<h1>Welcome to the World Wide Web!</h1>";
+    const jsonResponseBody = "<html><body><h1>Welcome to the World Wide Web!</h1></body></html>";
 
-    response.end("<html><body><h1>Welcome to the World Wide Web!</h1></body></html>");
+    response.end(jsonResponseBody);
   });
 }
 
