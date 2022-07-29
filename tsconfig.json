@@ -1,0 +1,12 @@
+{
+  "extends": "@tsconfig/node16/tsconfig.json",
+  "target": "esnext",
+  "module": "commonjs",
+  "compilerOptions": {
+    "outDir": "./dist",
+    "sourceMap": true,
+    "module": "commonjs"
+  },
+  "include": ["src/**/*.ts"],
+  "exclude": ["src/**/*.test.js"]
+}
