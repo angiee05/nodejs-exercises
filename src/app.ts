@@ -3,8 +3,8 @@ import "express-async-errors";
 
 const app = express();
 
-app.get("/andiamo", (request, response) => {
-  response.json([{ città: "Tbilisi" }, { provincia: "Kartli" }]);
+app.get("/cities", (request, response) => {
+  response.json([{ city: "Naples" }, { city: "Florence" }]);
 });
 
 export default app;

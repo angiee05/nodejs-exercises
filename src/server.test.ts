@@ -1,18 +1,14 @@
-import supertest from "supertest"
+import supertest from "supertest";
 
 import app from "./app";
 
 const request = supertest(app);
 
-
-test('GET /andiamo', async () => { 
+test("GET /cities", async () => {
   const response = await request
-    .get("/andiamo")
+    .get("/cities")
     .expect(200)
     .expect("Content-Type", /application\/json/);
 
-  expect(response.body).toEqual([
-    { città: "Tbilisi" },
-    { provincia: "Kartli" },
-  ]);
-})
+  expect(response.body).toEqual([{ city: "Naples" }, { city: "Florence" }]);
+});
