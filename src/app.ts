@@ -1,6 +1,7 @@
 import express from "express";
 import "express-async-errors";
 import { PrismaClient } from "@prisma/client";
+import cors from "cors";
 
 import {
   validate,
@@ -9,9 +10,14 @@ import {
   CityData,
 } from "./validation";
 
+const corsOption = {
+  origin: "http://localhost:8080",
+};
+
 const app = express();
 const prisma = new PrismaClient();
 app.use(express.json());
+app.use(cors(corsOption));
 
 app.get("/cities", async (request, response) => {
   const cities = await prisma.city.findMany();

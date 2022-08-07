@@ -6,10 +6,15 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 require("express-async-errors");
 const client_1 = require("@prisma/client");
+const cors_1 = __importDefault(require("cors"));
 const validation_1 = require("./validation");
+const corsOption = {
+    origin: "http://localhost:8080",
+};
 const app = (0, express_1.default)();
 const prisma = new client_1.PrismaClient();
 app.use(express_1.default.json());
+app.use((0, cors_1.default)(corsOption));
 app.get("/cities", async (request, response) => {
     const cities = await prisma.city.findMany();
     response.json(cities);
