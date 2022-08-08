@@ -1,4 +1,4 @@
-import express from "express";
+import express, { response } from "express";
 import "express-async-errors";
 import { PrismaClient } from "@prisma/client";
 import cors from "cors";
@@ -9,6 +9,11 @@ import {
   citySchema,
   CityData,
 } from "./validation";
+import { request } from "http";
+
+import { initMulterMiddleware } from "./middleware/multer";
+
+const upload = initMulterMiddleware();
 
 const corsOption = {
   origin: "http://localhost:8080",
@@ -91,6 +96,23 @@ app.delete("/:id(\\d)", async (req, res, next) => {
     return next(error);
   }
 });
+
+app.post(
+  "/cities/:id(\\d+)/photo",
+  upload.single("photo"),
+  async (request, response, next) => {
+    console.log("request.file", request.file);
+
+    if (!request.file) {
+      response.status(400);
+      return next("No photo uploaded");
+    }
+
+    const photoFilename = request.file.filename;
+
+    response.status(201).json({ photoFilename });
+  }
+);
 
 app.use(ValidationErrorMiddleware);
 

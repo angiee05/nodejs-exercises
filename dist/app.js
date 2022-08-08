@@ -8,6 +8,8 @@ require("express-async-errors");
 const client_1 = require("@prisma/client");
 const cors_1 = __importDefault(require("cors"));
 const validation_1 = require("./validation");
+const multer_1 = require("./middleware/multer");
+const upload = (0, multer_1.initMulterMiddleware)();
 const corsOption = {
     origin: "http://localhost:8080",
 };
@@ -76,6 +78,15 @@ app.delete("/:id(\\d)", async (req, res, next) => {
         res.status(400).json(error);
         return next(error);
     }
+});
+app.post("/cities/:id(\\d+)/photo", upload.single("photo"), async (request, response, next) => {
+    console.log("request.file", request.file);
+    if (!request.file) {
+        response.status(400);
+        return next("No photo uploaded");
+    }
+    const photoFilename = request.file.filename;
+    response.status(201).json({ photoFilename });
 });
 app.use(validation_1.ValidationErrorMiddleware);
 exports.default = app;
