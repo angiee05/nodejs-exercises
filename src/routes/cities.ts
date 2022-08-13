@@ -7,7 +7,8 @@ import {
   citySchema,
   CityData,
 } from "../middleware/validation";
-import { request } from "http";
+
+import { checkAuthotization } from "../middleware/passport";
 
 const prisma = new PrismaClient();
 
@@ -17,8 +18,8 @@ const upload = initMulterMiddleware();
 
 const router = Router();
 
-router.get("/cities", async (request, response) => {
-  const cities = await prisma.city.findMany();
+router.get("/", async (request, response) => {
+  const cities = await prisma.cities.findMany();
   response.json(cities);
 });
 
@@ -26,7 +27,7 @@ router.get("/:id(\\d+)", async (req, res, next) => {
   try {
     const cityId: number = Number(req.params.id);
 
-    const city = await prisma.city.findUnique({ where: { id: cityId } });
+    const city = await prisma.cities.findUnique({ where: { id: cityId } });
 
     if (!city) {
       res.status(404);
@@ -41,13 +42,15 @@ router.get("/:id(\\d+)", async (req, res, next) => {
 });
 
 router.post(
-  "/cities",
+  "/",
+  checkAuthotization,
   validate({ body: citySchema }),
   async (req, res, next) => {
     try {
       const CityData: CityData = req.body;
-      const city = await prisma.city.create({
-        data: CityData,
+      const username = req.user?.username as string;
+      const city = await prisma.cities.create({
+        data: { ...CityData, createdBy: username, updatedBy: username },
       });
 
       res.status(201).json(`Correctly added city with ID: ${city.id}`);
@@ -60,14 +63,16 @@ router.post(
 
 router.patch(
   "/:id(\\d+)",
+  checkAuthotization,
   validate({ body: citySchema }),
   async (req, res, next) => {
     try {
       const CityData: CityData = req.body;
+      const username = req.user?.username as string;
       const { id } = req.params;
-      const city = await prisma.city.update({
+      const city = await prisma.cities.update({
         where: { id: Number(id) },
-        data: CityData,
+        data: { ...CityData, updatedBy: username },
       });
 
       res.status(201).json(`Correctly Updated City With ID: ${city.id}`);
@@ -78,10 +83,10 @@ router.patch(
   }
 );
 
-router.delete("/:id(\\d)", async (req, res, next) => {
+router.delete("/:id(\\d)", checkAuthotization, async (req, res, next) => {
   try {
     const { id } = req.params;
-    const city = await prisma.city.delete({
+    const city = await prisma.cities.delete({
       where: {
         id: Number(id),
       },
@@ -95,7 +100,8 @@ router.delete("/:id(\\d)", async (req, res, next) => {
 });
 
 router.post(
-  "/cities/:id(\\d+)/photo",
+  "/:id(\\d+)/photo",
+  checkAuthotization,
   upload.single("photo"),
   async (request, response, next) => {
     console.log("request.file", request.file);

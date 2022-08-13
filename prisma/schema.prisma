@@ -10,10 +10,12 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model City {
-  id             Int          @id @default(autoincrement())
-  name           String       @db.VarChar(255)
-  population     Int?
-  createdAt      DateTime     @default(now())
-  updatedAt      DateTime     @updatedAt
+model Cities {
+  id         Int      @id @default(autoincrement())
+  name       String   @db.VarChar(255)
+  population Int?
+  createdAt  DateTime @default(now())
+  createdBy  String?  @db.VarChar(255)
+  updatedAt  DateTime @updatedAt
+  updatedBy  String?  @db.VarChar(255)
 }
